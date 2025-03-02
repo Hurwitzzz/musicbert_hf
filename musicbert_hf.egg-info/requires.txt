@@ -1,0 +1,21 @@
+torch
+transformers
+omegaconf
+
+[dev]
+pytest
+lovely-tensors
+
+[finetune]
+pandas
+h5py
+scikit-learn
+accelerate>=0.26.0
+
+[predict]
+pandas
+sh
+einops
+music_df@ git+https://github.com/malcolmsailor/music_df.git
+reprs@ git+https://github.com/malcolmsailor/reprs.git
+metricker@ git+https://github.com/malcolmsailor/metricker.git
