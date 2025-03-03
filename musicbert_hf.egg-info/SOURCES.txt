@@ -16,5 +16,11 @@ musicbert_hf.egg-info/SOURCES.txt
 musicbert_hf.egg-info/dependency_links.txt
 musicbert_hf.egg-info/requires.txt
 musicbert_hf.egg-info/top_level.txt
+musicbert_hf/utils/__init__.py
+musicbert_hf/utils/collate.py
+musicbert_hf/utils/misc.py
+musicbert_hf/utils/read.py
+musicbert_hf/utils/sticky_viterbi.py
+musicbert_hf/utils/sync_slices.py
 tests/test_load_from_fairseq_checkpoint.py
 tests/test_randomly_initialized_models.py

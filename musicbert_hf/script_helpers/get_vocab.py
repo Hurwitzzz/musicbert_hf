@@ -56,29 +56,31 @@ def get_vocab(
         elif path.endswith(".txt"):
             logging.info(f"Loading FairSEQ formatted vocab from {path}")
             special_tokens = ["<unk>", "<pad>", "<s>", "</s>"]
-            
+
             with open(path, "r") as f:
                 file_tokens = [
                     line.split()[0].strip()
                     for line in f.readlines()
                     if not line.startswith("madeupword")
                 ]
-            
-            return special_tokens + [token for token in file_tokens if token not in set(special_tokens)]
+
+            return special_tokens + [
+                token for token in file_tokens if token not in set(special_tokens)
+            ]
         else:
             logging.info(f"Loading plaintext vocab from {path}")
             with open(path, "r") as f:
                 return [line.strip() for line in f.readlines()]
 
     # Cases 2 & 3: Infer from CSV data
-    assert feature is not None and csv_folder is not None, (
-        "Both 'feature' and 'csv_folder' must be provided to infer vocabulary"
-    )
+    assert (
+        feature is not None and csv_folder is not None
+    ), "Both 'feature' and 'csv_folder' must be provided to infer vocabulary"
 
-    logging.info(f"Inferring {feature} vocab from {csv_folder}")    
+    logging.info(f"Inferring {feature} vocab from {csv_folder}")
     if path is not None:
         os.makedirs(os.path.dirname(path), exist_ok=True)
-    
+
     # Extract tokens from all CSV files
     csv_files = glob.glob(os.path.join(csv_folder, "*.csv"))
     unique_tokens = set(specials)
@@ -100,7 +102,7 @@ def get_vocab(
         )
 
     vocab = list(specials) + unique_tokens
-    
+
     if path is not None:
         logging.info(f"Saving vocabulary to {path}")
         with open(path, "w") as f:
@@ -111,6 +113,7 @@ def get_vocab(
                     f.write(token + "\n")
 
     return vocab
+
 
 def handle_vocab(csv_folder=None, feature=None, path=None):
     itos = get_vocab(csv_folder, feature, path)
