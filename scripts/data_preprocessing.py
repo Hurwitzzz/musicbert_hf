@@ -57,7 +57,6 @@ sys.excepthook = custom_excepthook
 
 
 def main(config: Config):
-    breakpoint()
     all_itos = {}
     all_stoi = {}
     for feature in config.features:
