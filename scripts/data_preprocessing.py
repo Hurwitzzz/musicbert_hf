@@ -77,6 +77,8 @@ def main(config: Config):
                 f"Concatenated feature {concatted_feature} not in vocabs"
             )
         itos, stoi = handle_vocab(
+            csv_folder=config.train_input_folder,
+            feature=concatted_feature,
             path=config.vocabs[concatted_feature],
         )
         all_itos[concatted_feature] = itos
