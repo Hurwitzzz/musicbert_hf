@@ -46,7 +46,10 @@ from musicbert_hf.checkpoints import (
 )
 from musicbert_hf.data import HDF5Dataset, collate_for_musicbert_fn
 from musicbert_hf.metrics import compute_metrics, compute_metrics_multitask
-from musicbert_hf.models import freeze_layers
+from musicbert_hf.models import (
+    freeze_layers,
+    MusicBertMultiTaskTokenClassificationConfig,
+)
 
 
 @dataclass
@@ -75,9 +78,9 @@ class Config:
     job_id: str | None = None
 
     def __post_init__(self):
-        assert self.num_epochs is not None or self.max_steps is not None, (
-            "Either num_epochs or max_steps must be provided"
-        )
+        assert (
+            self.num_epochs is not None or self.max_steps is not None
+        ), "Either num_epochs or max_steps must be provided"
         if self.job_id is None:
             self.job_id = os.environ.get("SLURM_JOB_ID", None)
             if self.job_id is None:
@@ -170,6 +173,7 @@ if __name__ == "__main__":
                         config.checkpoint_path,
                         checkpoint_type="musicbert",
                         num_labels=train_dataset.vocab_sizes,
+                        config_cls=MusicBertMultiTaskTokenClassificationConfig,
                     )
                 )
             model.config.multitask_label2id = train_dataset.stois
