@@ -1,6 +1,6 @@
 {
-  "input_base_folder": "/zhome/stud/zhangya/yyang/datasets_debug/rnbert_seqs/data/",
-  "output_base_folder": "/zhome/stud/zhangya/yyang/datasets_debug/rnbert_h5",
+  "input_base_folder": "/zhome/stud/zhangya/yyang/datasets/rnbert_seqs/data/",
+  "output_base_folder": "/zhome/stud/zhangya/yyang/datasets/rnbert_h5",
   "features": [
     "events",
     "quality",

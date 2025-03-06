@@ -80,7 +80,9 @@ class HDF5Dataset(Dataset):
         compound_ratio: int = 8,
     ):
         super().__init__()
-        self.inputs = h5py.File(inputs_path, "r")
+        self.inputs = h5py.File(
+            inputs_path, "r"
+        )  # four functioneal datasets in h5: 'name', 'num_seqs', 'vocab', 'vocab_size'
         self.num_seqs = self.inputs["num_seqs"][()]
         self.conditioning = (
             h5py.File(conditioning_path, "r") if conditioning_path else None
@@ -118,7 +120,9 @@ class HDF5Dataset(Dataset):
         return len(self.targets)
 
     def __getitem__(self, idx):
-        input_ids = torch.tensor(self.inputs[f"{idx}"][()])
+        input_ids = torch.tensor(
+            self.inputs[f"{idx}"][()]
+        )  # the 2nd value of each octuple index, every 8 bits is a token
         targets = [torch.tensor(target[f"{idx}"][()]) for target in self.targets]
         if self.dtype is not None:
             input_ids = input_ids.to(self.dtype)

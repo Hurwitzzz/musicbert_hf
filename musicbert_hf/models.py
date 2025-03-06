@@ -75,20 +75,20 @@ class CompoundEmbeddings(BertEmbeddings):
         batch, compound_seq = input_ids.shape
         ratio = self.compound_ratio
 
-        assert not past_key_values_length, (
-            "past_key_values_length not supported for compound mode"
-        )
-        assert compound_seq % ratio == 0, (
-            f"token sequences length should be multiple of {ratio} for compound mode"
-        )
+        assert (
+            not past_key_values_length
+        ), "past_key_values_length not supported for compound mode"
+        assert (
+            compound_seq % ratio == 0
+        ), f"token sequences length should be multiple of {ratio} for compound mode"
 
         seq = compound_seq // ratio
         # (Malcolm 2024-02-20) I'm not sure what the motivation for this assertion
         #   is, hidden states for intermediate layers seem to work as normal.
         # assert last_state_only, "hidden states not available for compound mode"
-        assert position_ids is None, (
-            "custom position_ids are not supported for compound mode"
-        )
+        assert (
+            position_ids is None
+        ), "custom position_ids are not supported for compound mode"
 
         # (Malcolm 2024-03-13) unlike the fairseq implementation, we give position
         #   ids to padding tokens but I don't think this should matter since we
@@ -96,10 +96,12 @@ class CompoundEmbeddings(BertEmbeddings):
         # (Malcolm 2024-03-15) fairseq begins position ids from 2
         position_ids = self.position_ids[:, 2 : seq + 2]
 
-        assert inputs_embeds is None, (
-            "inputs_embeds are not supported for compound mode"
-        )
-        assert (token_type_ids is None) or not token_type_ids.any(), (
+        assert (
+            inputs_embeds is None
+        ), "inputs_embeds are not supported for compound mode"
+        assert (
+            token_type_ids is None
+        ) or not token_type_ids.any(), (
             "token_type_ids are not supported for compound mode"
         )
 
@@ -169,9 +171,9 @@ class MusicBertEncoder(BertModel):
             assert input_ids is not None
 
             batch_size, compound_seq = input_ids.shape
-            assert compound_seq % self.compound_ratio == 0, (
-                f"token sequences length should be multiple of {self.compound_ratio} for compound mode"
-            )
+            assert (
+                compound_seq % self.compound_ratio == 0
+            ), f"token sequences length should be multiple of {self.compound_ratio} for compound mode"
             seq = compound_seq // self.compound_ratio
             assert past_key_values is None
             attention_mask = torch.ones(((batch_size, seq)), device=input_ids.device)
@@ -223,9 +225,9 @@ class MusicBert(BertPreTrainedModel):
                 "If you want to use `MusicBert` make sure `config.is_decoder=False` for "
                 "bi-directional self-attention."
             )
-        assert not config.tie_word_embeddings, (
-            "`tie_word_embeddings` is not implemented"
-        )
+        assert (
+            not config.tie_word_embeddings
+        ), "`tie_word_embeddings` is not implemented"
 
         self.bert = MusicBertEncoder(config, add_pooling_layer=False)
         self.cls = BertOnlyMLMHead(config)
@@ -364,9 +366,9 @@ class MusicBertTokenClassification(BertPreTrainedModel):
                 "If you want to use `MusicBert` make sure `config.is_decoder=False` for "
                 "bi-directional self-attention."
             )
-        assert not config.tie_word_embeddings, (
-            "`tie_word_embeddings` is not implemented"
-        )
+        assert (
+            not config.tie_word_embeddings
+        ), "`tie_word_embeddings` is not implemented"
 
         self.bert = MusicBertEncoder(config, add_pooling_layer=False, upsample=False)
 
@@ -560,9 +562,9 @@ class MusicBertMultiTaskTokenClassification(BertPreTrainedModel):
                 "If you want to use `MusicBert` make sure `config.is_decoder=False` for "
                 "bi-directional self-attention."
             )
-        assert not config.tie_word_embeddings, (
-            "`tie_word_embeddings` is not implemented"
-        )
+        assert (
+            not config.tie_word_embeddings
+        ), "`tie_word_embeddings` is not implemented"
 
         self.bert = MusicBertEncoder(config, add_pooling_layer=False, upsample=False)
 
@@ -638,18 +640,18 @@ class MusicBertMultiTaskTokenClassification(BertPreTrainedModel):
         )
 
         if isinstance(labels, torch.Tensor):
-            assert labels.ndim == 3, (
-                "labels must have shape (num_tasks, batch_size, sequence_length)"
-            )
-            assert labels.shape[0] == self.num_tasks, (
-                "labels must have shape (num_tasks, batch_size, sequence_length)"
-            )
+            assert (
+                labels.ndim == 3
+            ), "labels must have shape (num_tasks, batch_size, sequence_length)"
+            assert (
+                labels.shape[0] == self.num_tasks
+            ), "labels must have shape (num_tasks, batch_size, sequence_length)"
         elif isinstance(labels, list):
             assert len(labels) == self.num_tasks, "labels must have length num_tasks"
             for label in labels:
-                assert label.ndim == 2, (
-                    "labels must have shape (batch_size, sequence_length)"
-                )
+                assert (
+                    label.ndim == 2
+                ), "labels must have shape (batch_size, sequence_length)"
 
         outputs = self.bert(
             input_ids,
@@ -751,9 +753,9 @@ class MusicBertMultiTaskTokenClassConditioned(BertPreTrainedModel):
                 "If you want to use `MusicBert` make sure `config.is_decoder=False` for "
                 "bi-directional self-attention."
             )
-        assert not config.tie_word_embeddings, (
-            "`tie_word_embeddings` is not implemented"
-        )
+        assert (
+            not config.tie_word_embeddings
+        ), "`tie_word_embeddings` is not implemented"
 
         self.bert = MusicBertEncoder(config, add_pooling_layer=False, upsample=False)
 
@@ -854,18 +856,18 @@ class MusicBertMultiTaskTokenClassConditioned(BertPreTrainedModel):
         )
 
         if isinstance(labels, torch.Tensor):
-            assert labels.ndim == 3, (
-                "labels must have shape (num_tasks, batch_size, sequence_length)"
-            )
-            assert labels.shape[0] == self.num_tasks, (
-                "labels must have shape (num_tasks, batch_size, sequence_length)"
-            )
+            assert (
+                labels.ndim == 3
+            ), "labels must have shape (num_tasks, batch_size, sequence_length)"
+            assert (
+                labels.shape[0] == self.num_tasks
+            ), "labels must have shape (num_tasks, batch_size, sequence_length)"
         elif isinstance(labels, list):
             assert len(labels) == self.num_tasks, "labels must have length num_tasks"
             for label in labels:
-                assert label.ndim == 2, (
-                    "labels must have shape (batch_size, sequence_length)"
-                )
+                assert (
+                    label.ndim == 2
+                ), "labels must have shape (batch_size, sequence_length)"
         outputs = self.bert(
             input_ids,
             attention_mask=attention_mask,
@@ -945,10 +947,10 @@ def freeze_layers(model: nn.Module, layers: Sequence[int] | int | None):
     for name, param in model.named_parameters():
         for layer in layers:
             if name.startswith(f"bert.encoder.layer.{layer}."):
-                logging.debug(f"Freezing {name}")
+                logger.info(f"Freezing {name}")
                 param.requires_grad = False
         if name.startswith("bert.embeddings"):
-            logging.debug(f"Freezing {name}")
+            logger.info(f"Freezing {name}")
             # (Malcolm 2025-01-22) if we freeze any layers, we also freeze the
             # embeddings. Eventually we might want to freeze the embeddings separately.
             param.requires_grad = False

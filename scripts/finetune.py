@@ -50,6 +50,9 @@ from musicbert_hf.models import (
     freeze_layers,
     MusicBertMultiTaskTokenClassificationConfig,
 )
+from transformers.utils import logging
+
+logging.set_verbosity_info()
 
 
 @dataclass
@@ -182,7 +185,7 @@ if __name__ == "__main__":
                     v: k for k, v in model.config.multitask_label2id[target].items()
                 }
                 for target in train_dataset.stois
-            }
+            }  # TODO: During data_preprocessing, we hope both -100 and 1 are used for padding, but in multitask_id2label only -100 is used. Check if this is correct.
         else:
             if config.conditioning:
                 raise NotImplementedError(
