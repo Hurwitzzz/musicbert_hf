@@ -46,17 +46,17 @@ def _load_from_checkpoint(
     vocab_size = 1237  # Not sure if there is a way to retrieve this from ckpt_state_dict, can't find it
 
     bert_config = config_cls(
-        num_hidden_layers=n_layers,
-        hidden_size=d_model,
-        intermediate_size=d_ff,
-        vocab_size=vocab_size,
-        num_attention_heads=n_heads,
+        num_hidden_layers=n_layers,  # 12
+        hidden_size=d_model,  # 768
+        intermediate_size=d_ff,  # 3072
+        vocab_size=vocab_size,  # 1237
+        num_attention_heads=n_heads,  # 12
         # 2 seems to be added because 1 is used as padding_idx, so
         #   all position ids must start from 2
-        max_position_embeddings=max_positions + 2,
+        max_position_embeddings=max_positions + 2,  # 8192 +2
         tie_word_embeddings=False,
-        pad_token_id=padding_idx,
-        **config_kwargs,
+        pad_token_id=padding_idx,  # 1
+        **config_kwargs,  # {}
     )
 
     model = model_cls(bert_config)
@@ -85,18 +85,18 @@ def _load_from_checkpoint(
         parameter_mapping[
             f"encoder.sentence_encoder.layers.{i}.self_attn_layer_norm.bias"
         ] = f"bert.encoder.layer.{i}.attention.output.LayerNorm.bias"
-        parameter_mapping[f"encoder.sentence_encoder.layers.{i}.fc1.weight"] = (
-            f"bert.encoder.layer.{i}.intermediate.dense.weight"
-        )
-        parameter_mapping[f"encoder.sentence_encoder.layers.{i}.fc1.bias"] = (
-            f"bert.encoder.layer.{i}.intermediate.dense.bias"
-        )
-        parameter_mapping[f"encoder.sentence_encoder.layers.{i}.fc2.weight"] = (
-            f"bert.encoder.layer.{i}.output.dense.weight"
-        )
-        parameter_mapping[f"encoder.sentence_encoder.layers.{i}.fc2.bias"] = (
-            f"bert.encoder.layer.{i}.output.dense.bias"
-        )
+        parameter_mapping[
+            f"encoder.sentence_encoder.layers.{i}.fc1.weight"
+        ] = f"bert.encoder.layer.{i}.intermediate.dense.weight"
+        parameter_mapping[
+            f"encoder.sentence_encoder.layers.{i}.fc1.bias"
+        ] = f"bert.encoder.layer.{i}.intermediate.dense.bias"
+        parameter_mapping[
+            f"encoder.sentence_encoder.layers.{i}.fc2.weight"
+        ] = f"bert.encoder.layer.{i}.output.dense.weight"
+        parameter_mapping[
+            f"encoder.sentence_encoder.layers.{i}.fc2.bias"
+        ] = f"bert.encoder.layer.{i}.output.dense.bias"
         parameter_mapping[
             f"encoder.sentence_encoder.layers.{i}.final_layer_norm.weight"
         ] = f"bert.encoder.layer.{i}.output.LayerNorm.weight"
@@ -105,30 +105,30 @@ def _load_from_checkpoint(
         ] = f"bert.encoder.layer.{i}.output.LayerNorm.bias"
 
     # compound embeddings
-    parameter_mapping["encoder.sentence_encoder.downsampling.0.weight"] = (
-        "bert.embeddings.downsampling.0.weight"
-    )
-    parameter_mapping["encoder.sentence_encoder.downsampling.0.bias"] = (
-        "bert.embeddings.downsampling.0.bias"
-    )
-    parameter_mapping["encoder.sentence_encoder.upsampling.0.weight"] = (
-        "bert.embeddings.upsampling.0.weight"
-    )
-    parameter_mapping["encoder.sentence_encoder.upsampling.0.bias"] = (
-        "bert.embeddings.upsampling.0.bias"
-    )
-    parameter_mapping["encoder.sentence_encoder.embed_tokens.weight"] = (
-        "bert.embeddings.word_embeddings.weight"
-    )
-    parameter_mapping["encoder.sentence_encoder.embed_positions.weight"] = (
-        "bert.embeddings.position_embeddings.weight"
-    )
-    parameter_mapping["encoder.sentence_encoder.emb_layer_norm.weight"] = (
-        "bert.embeddings.LayerNorm.weight"
-    )
-    parameter_mapping["encoder.sentence_encoder.emb_layer_norm.bias"] = (
-        "bert.embeddings.LayerNorm.bias"
-    )
+    parameter_mapping[
+        "encoder.sentence_encoder.downsampling.0.weight"
+    ] = "bert.embeddings.downsampling.0.weight"
+    parameter_mapping[
+        "encoder.sentence_encoder.downsampling.0.bias"
+    ] = "bert.embeddings.downsampling.0.bias"
+    parameter_mapping[
+        "encoder.sentence_encoder.upsampling.0.weight"
+    ] = "bert.embeddings.upsampling.0.weight"
+    parameter_mapping[
+        "encoder.sentence_encoder.upsampling.0.bias"
+    ] = "bert.embeddings.upsampling.0.bias"
+    parameter_mapping[
+        "encoder.sentence_encoder.embed_tokens.weight"
+    ] = "bert.embeddings.word_embeddings.weight"
+    parameter_mapping[
+        "encoder.sentence_encoder.embed_positions.weight"
+    ] = "bert.embeddings.position_embeddings.weight"
+    parameter_mapping[
+        "encoder.sentence_encoder.emb_layer_norm.weight"
+    ] = "bert.embeddings.LayerNorm.weight"
+    parameter_mapping[
+        "encoder.sentence_encoder.emb_layer_norm.bias"
+    ] = "bert.embeddings.LayerNorm.bias"
 
     if expected_missing_src_keys is None:
         expected_missing_src_keys = []
@@ -185,9 +185,7 @@ def _load_from_checkpoint(
             only_in_missing_dst_keys,
             only_in_expected_missing_dst_keys,
         ]
-    ), (
-        f"{only_in_missing_src_keys=}, {only_in_expected_missing_src_keys=}, {only_in_missing_dst_keys=}, {only_in_expected_missing_dst_keys=}"
-    )
+    ), f"{only_in_missing_src_keys=}, {only_in_expected_missing_src_keys=}, {only_in_missing_dst_keys=}, {only_in_expected_missing_dst_keys=}"
 
     if print_state_dicts:
         print("REMAPPED_STATE_DICT")
@@ -227,18 +225,18 @@ def load_musicbert_from_fairseq_checkpoint(
     #   shape as cls.predictions.decoder.bias. Not sure what that does; it is
     #   initialized to zeros so it shouldn't matter too much but perhaps we can
     #   disable it?
-    parameter_mapping["encoder.lm_head.dense.weight"] = (
-        "cls.predictions.transform.dense.weight"
-    )
-    parameter_mapping["encoder.lm_head.dense.bias"] = (
-        "cls.predictions.transform.dense.bias"
-    )
-    parameter_mapping["encoder.lm_head.layer_norm.weight"] = (
-        "cls.predictions.transform.LayerNorm.weight"
-    )
-    parameter_mapping["encoder.lm_head.layer_norm.bias"] = (
-        "cls.predictions.transform.LayerNorm.bias"
-    )
+    parameter_mapping[
+        "encoder.lm_head.dense.weight"
+    ] = "cls.predictions.transform.dense.weight"
+    parameter_mapping[
+        "encoder.lm_head.dense.bias"
+    ] = "cls.predictions.transform.dense.bias"
+    parameter_mapping[
+        "encoder.lm_head.layer_norm.weight"
+    ] = "cls.predictions.transform.LayerNorm.weight"
+    parameter_mapping[
+        "encoder.lm_head.layer_norm.bias"
+    ] = "cls.predictions.transform.LayerNorm.bias"
     expected_missing_dst_keys = ["cls.predictions.bias"]
     return _load_from_checkpoint(
         model_config,
@@ -286,9 +284,9 @@ def load_musicbert_token_classifier_from_fairseq_checkpoint(
             "classifier.out_proj.bias",
         ]
     elif checkpoint_type == "token_classifier":
-        assert num_labels is None, (
-            "num_labels must be None for token_classifier (we infer it from the checkpoint)"
-        )
+        assert (
+            num_labels is None
+        ), "num_labels must be None for token_classifier (we infer it from the checkpoint)"
         num_labels = src_state_dict[
             "classification_heads.sequence_tagging_head.out_proj.bias"
         ].shape[0]
@@ -353,9 +351,9 @@ def load_musicbert_multitask_token_classifier_from_fairseq_checkpoint(
             )
 
     elif checkpoint_type == "token_classifier":
-        assert num_labels is None, (
-            "num_labels must be None for token_classifier (we infer it from the checkpoint)"
-        )
+        assert (
+            num_labels is None
+        ), "num_labels must be None for token_classifier (we infer it from the checkpoint)"
 
         num_labels = []
 
@@ -470,9 +468,9 @@ def load_musicbert_multitask_token_classifier_with_conditioning_from_fairseq_che
             )
         expected_missing_dst_keys.append("z_encoder.embedding.weight")
     elif checkpoint_type == "token_classifier":
-        assert num_labels is None, (
-            "num_labels must be None for token_classifier (we infer it from the checkpoint)"
-        )
+        assert (
+            num_labels is None
+        ), "num_labels must be None for token_classifier (we infer it from the checkpoint)"
         assert z_vocab_size is None, "z_vocab_size must be None for token_classifier"
 
         num_labels = []
