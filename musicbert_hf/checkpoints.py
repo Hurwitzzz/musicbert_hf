@@ -169,6 +169,13 @@ def _load_from_checkpoint(
             if print_missing_keys and key not in expected_missing_dst_keys:
                 print(f"Dest key `{key}` not in `parameter_mapping`")
 
+    # (Hewei 2025-03-24) If we load musicbert from ft-ed rnbert, we need to ignore classification heads.
+    missing_src_keys = [
+        key
+        for key in missing_src_keys
+        if "classification_heads.sequence_multitask_tagging_head" not in key
+    ]
+
     only_in_missing_src_keys = set(missing_src_keys) - set(expected_missing_src_keys)
     only_in_expected_missing_src_keys = set(expected_missing_src_keys) - set(
         missing_src_keys
