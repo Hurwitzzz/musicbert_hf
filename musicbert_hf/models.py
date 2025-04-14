@@ -161,6 +161,7 @@ class MusicBertEncoder(BertModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        upsample: bool = True, # (Hewei 2025-04-14) To reduce the seq_len, we shouldn't upsample. Actually, Malcolm provided `upsample` in __init__() of MusicBertEncoder, but it is not convenient to pass it into. So I hard code it here.
     ):
         return_dict = (
             return_dict if return_dict is not None else self.config.use_return_dict
@@ -195,6 +196,8 @@ class MusicBertEncoder(BertModel):
         )
         if not return_dict:
             raise NotImplementedError
+        if not upsample:
+            return output
         else:
             output.last_hidden_state = self.embeddings.possibly_upsample(  # type:ignore
                 output.last_hidden_state  # type:ignore
