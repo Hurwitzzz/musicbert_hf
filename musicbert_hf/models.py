@@ -942,7 +942,7 @@ BERT_PARAMS = {
 }
 
 
-def freeze_layers(model: nn.Module, layers: Sequence[int] | int | None):
+def freeze_layers(model: nn.Module, layers: Sequence[int] | int | None, freeze_cls: bool = False):
     if layers is None:
         return model
     if isinstance(layers, int):
@@ -957,3 +957,9 @@ def freeze_layers(model: nn.Module, layers: Sequence[int] | int | None):
             # (Malcolm 2025-01-22) if we freeze any layers, we also freeze the
             # embeddings. Eventually we might want to freeze the embeddings separately.
             param.requires_grad = False
+        if freeze_cls:
+            # Freeze the classifier
+            if name.startswith("cls"):
+                logger.info(f"Freezing {name}")
+                param.requires_grad = False
+
