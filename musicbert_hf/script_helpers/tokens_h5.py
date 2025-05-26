@@ -72,7 +72,7 @@ def to_tokens_h5(
                     # stop tokens in the case of events and no stop tokens otherwise.
                     # Either way, we check for a missing stop token and append it.
                     missing_stop_token_count = 0
-                    while tokens[-8 + missing_stop_token_count] != "</s>":
+                    while tokens[-feature_must_divide_by['events'] + missing_stop_token_count] != "</s>":
                         missing_stop_token_count += 1
                         if missing_stop_token_count == 8:
                             break
@@ -82,7 +82,8 @@ def to_tokens_h5(
                         tokens.append("</s>")
 
                 data = np.array(
-                    [this_stoi.get(token, this_stoi["<unk>"]) for token in tokens]
+                    # [this_stoi.get(token, this_stoi["<unk>"]) for token in tokens]
+                    [this_stoi[token] for token in tokens]
                 )
                 output_files[feature].create_dataset(f"{row_count}", data=data)
             for concat in concat_features:
