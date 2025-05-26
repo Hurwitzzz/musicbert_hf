@@ -97,8 +97,8 @@ def forward(
 
     batch_size, seq_length = input_shape
     # MonkeyPatch: just hard code 8x ratio.
-    assert seq_length % 8 == 0, "Sequence length must be divisible by 8"
-    seq_length = seq_length // 8
+    assert seq_length % 9 == 0, "Sequence length must be divisible by 8"
+    seq_length = seq_length // 9
 
     device = input_ids.device if input_ids is not None else inputs_embeds.device
 
