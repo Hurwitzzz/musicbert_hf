@@ -133,15 +133,14 @@ class MusicBertEncoder(BertModel):
         self,
         config,
         *,
-        compound_ratio: int = 8,
         add_pooling_layer=False,
         upsample: bool = True,
     ):
         super().__init__(config, add_pooling_layer=add_pooling_layer)
         self.config = config
-        self.embeddings = CompoundEmbeddings(config, upsample=upsample)
+        self.embeddings = CompoundEmbeddings(config, compound_ratio=config.compound_ratio, upsample=upsample)
         self.encoder = BertEncoder(config)
-        self.compound_ratio = compound_ratio
+        self.compound_ratio = config.compound_ratio
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -208,9 +207,9 @@ class MusicBertEncoder(BertModel):
 class MusicBertConfig(BertConfig):
     # Just make sure tie_word_embeddings is False by default since it
     #   is not implemented for MusicBert
-    def __init__(self, *args, tie_word_embeddings=False, **kwargs):
-        super().__init__(*args, tie_word_embeddings=False, **kwargs)
-
+    def __init__(self, *args, compound_ratio=8, tie_word_embeddings=False, **kwargs):
+        super().__init__(*args, tie_word_embeddings=tie_word_embeddings, **kwargs)
+        self.compound_ratio = compound_ratio
 
 @add_start_docstrings(
     """MusicBert model for MLM pre-training task.""", BERT_START_DOCSTRING

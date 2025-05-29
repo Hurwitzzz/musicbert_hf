@@ -6,6 +6,7 @@ from transformers import BertConfig, BertPreTrainedModel
 
 from musicbert_hf.models import (
     MusicBert,
+    MusicBertConfig,
     MusicBertMultiTaskTokenClassConditioned,
     MusicBertMultiTaskTokenClassConditionedConfig,
     MusicBertMultiTaskTokenClassification,
@@ -32,7 +33,7 @@ def _load_from_checkpoint(
     expected_missing_src_keys: list[str] | None = None,
     expected_missing_dst_keys: list[str] | None = None,
     print_state_dicts: bool = False,
-    config_cls: Type[BertConfig] = BertConfig,
+    config_cls: Type[BertConfig] = MusicBertConfig,
     **config_kwargs,
 ) -> T:
     max_positions = model_config.max_positions

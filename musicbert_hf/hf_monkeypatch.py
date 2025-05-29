@@ -96,9 +96,9 @@ def forward(
         raise ValueError("You have to specify either input_ids or inputs_embeds")
 
     batch_size, seq_length = input_shape
-    # MonkeyPatch: just hard code 8x ratio.
-    assert seq_length % 9 == 0, "Sequence length must be divisible by 8"
-    seq_length = seq_length // 9
+    # MonkeyPatch: just hard code 8x ratio. #(Hewei 29-05-2025) fix hardcoding.
+    assert seq_length % self.compound_ratio == 0, f"Sequence length must be divisible by {self.compound_ratio}"
+    seq_length = seq_length // self.compound_ratio
 
     device = input_ids.device if input_ids is not None else inputs_embeds.device
 
