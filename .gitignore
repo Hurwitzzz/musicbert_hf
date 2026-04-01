@@ -1,5 +1,6 @@
 venvvars
 pytest.ini
+.DS_Store
 wandb/
 notes.md
 temp_scripts/
