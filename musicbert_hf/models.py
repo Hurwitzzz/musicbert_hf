@@ -8,8 +8,6 @@ from torch.nn import CrossEntropyLoss
 from transformers import BertConfig, BertModel, BertPreTrainedModel
 from transformers.modeling_outputs import MaskedLMOutput, TokenClassifierOutput
 from transformers.models.bert.modeling_bert import (
-    BERT_INPUTS_DOCSTRING,
-    BERT_START_DOCSTRING,
     BertEmbeddings,
     BertEncoder,
     BertOnlyMLMHead,
@@ -22,6 +20,18 @@ from transformers.utils import (
 
 from musicbert_hf import from_fairseq
 from musicbert_hf.constants import INPUT_PAD
+
+try:
+    from transformers.models.bert.modeling_bert import (
+        BERT_INPUTS_DOCSTRING,
+        BERT_START_DOCSTRING,
+    )
+except ImportError:
+    # Newer transformers releases no longer export these BERT docstring helpers
+    # from the PyTorch modeling module. Falling back to empty strings preserves
+    # model imports without affecting runtime behavior.
+    BERT_INPUTS_DOCSTRING = ""
+    BERT_START_DOCSTRING = ""
 
 # MonkeyPatch: replace BertModel.forward with our version
 from musicbert_hf.hf_monkeypatch import forward as hf_forward  # noqa: F401
@@ -961,4 +971,3 @@ def freeze_layers(model: nn.Module, layers: Sequence[int] | int | None, freeze_c
             if name.startswith("cls"):
                 logger.info(f"Freezing {name}")
                 param.requires_grad = False
-
